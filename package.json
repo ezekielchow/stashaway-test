@@ -6,7 +6,8 @@
     "watch": "babel-watch  --watch -- index",
     "dev": "nodemon ./bin/www",
     "start": "node ./bin/www",
-    "client:build-dev": "webpack --watch"
+    "client:build-dev": "webpack --watch",
+    "lint": "npx eslint ."
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
