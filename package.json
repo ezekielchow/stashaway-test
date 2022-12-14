@@ -1,22 +1,31 @@
 {
   "name": "stashaway-test",
-  "version": "1.0.0",
-  "description": "Stashaway test",
-  "main": "index.js",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "test"
+    "watch": "babel-watch  --watch -- index",
+    "dev": "nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "client:build-dev": "webpack --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ezekielchow/stashaway-test.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ezekielchow/stashaway-test/issues"
-  },
-  "homepage": "https://github.com/ezekielchow/stashaway-test#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.0.3",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "mongoose": "^6.8.0",
+    "morgan": "~1.9.1",
+    "nodemon": "^2.0.20"
+  },
+  "devDependencies": {
+    "eslint": "^8.29.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  },
+  "nodemonConfig": {
+    "ext": "js,pug,css",
+    "delay": 1500
   }
 }
