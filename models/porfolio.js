@@ -12,4 +12,16 @@ const portfolioSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Portfolio', portfolioSchema);
+const Portfolio = mongoose.model('Portfolio', portfolioSchema);
+
+module.exports.Portfolio = Portfolio;
+
+module.exports.find = async (params) => {
+  const query = Portfolio.find();
+
+  if (params.user) {
+    query.where({ user: params.user });
+  }
+
+  return query.exec();
+};

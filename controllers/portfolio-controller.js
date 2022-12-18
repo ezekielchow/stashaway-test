@@ -1,12 +1,11 @@
 const { body, validationResult } = require('express-validator');
 
 const User = require('../models/user');
-const validators = require('../helpers/validators');
-const { generateUniqueReferenceCode } = require('../helpers/string');
+const { Portfolio, find } = require('../models/porfolio');
 
 exports.list = async (req, res) => {
   try {
-    return res.json({ data: await User.find() });
+    return res.json({ data: await find(req.query) });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -20,16 +19,22 @@ exports.create = async (req, res) => {
       return res.status(500).json({ error: errorMessages });
     }
 
-    const uniqueReferenceCode = await generateUniqueReferenceCode();
-
-    const user = new User({
-      email: req.body.email,
-      referenceCode: uniqueReferenceCode,
+    const exists = await User.exists({
+      _id: req.body.user,
     });
 
-    await user.save();
+    if (!exists) {
+      throw new Error('User doesn\'t exist');
+    }
 
-    return res.json({ data: user });
+    const portfolio = new Portfolio({
+      user: req.body.user,
+      name: req.body.name,
+    });
+
+    await portfolio.save();
+
+    return res.json({ data: portfolio });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -39,10 +44,10 @@ exports.validate = (method) => {
   switch (method) {
     case 'create': {
       return [
-        body('email').not().isEmpty().isEmail()
-          .withMessage('Invalid Email')
-          .normalizeEmail()
-          .custom(validators.emailIsUnique)
+        body('user').not().isEmpty()
+          .trim()
+          .escape(),
+        body('name').not().isEmpty().isLength({ min: 1, max: 128 })
           .trim()
           .escape(),
       ];
