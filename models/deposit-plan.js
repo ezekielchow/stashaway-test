@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 
+const TYPES = {
+  ONE_TIME: 'one-time',
+  MONTHLY: 'monthly',
+};
+
 const depositPlanSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -8,7 +13,7 @@ const depositPlanSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['one-time', 'monthly'],
+    enum: [TYPES.ONE_TIME, TYPES.MONTHLY],
   },
   allocations: [{
     portfolio: {
@@ -23,4 +28,9 @@ const depositPlanSchema = new mongoose.Schema({
   }],
 });
 
-module.exports = mongoose.model('DepositPlan', depositPlanSchema);
+const DepositPlan = mongoose.model('DepositPlan', depositPlanSchema);
+
+module.exports = {
+  DepositPlan,
+  TYPES,
+};

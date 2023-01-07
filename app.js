@@ -9,6 +9,7 @@ const usersRouter = require('./routes/users');
 const userDepositsRouter = require('./routes/user-deposits');
 const portfolioRouter = require('./routes/portfolio');
 
+require('./services/database');
 require('./models/index');
 
 require('dotenv').config();
