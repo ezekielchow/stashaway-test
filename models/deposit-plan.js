@@ -5,8 +5,6 @@ const TYPES = {
   MONTHLY: 'monthly',
 };
 
-console.log('eh?');
-
 const depositPlanSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,

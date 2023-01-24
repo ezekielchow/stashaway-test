@@ -5,13 +5,18 @@ require('dotenv').config({ path: '.env.test' });
 
 describe('MongodbMemoryServer init', () => {
   let mongod;
+  const dbName = 'stashawayTestDb';
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
 
     const mongoUri = mongod.getUri();
 
-    await mongoose.connect(mongoUri, {});
+    await mongoose.connect(mongoUri, {
+      dbName,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
   });
 
   beforeEach(async () => {
@@ -23,11 +28,11 @@ describe('MongodbMemoryServer init', () => {
   });
 
   afterAll(async () => {
-    if (mongoose.connection) {
-      await mongoose.connection.close();
-    }
     if (mongod) {
       await mongod.stop();
+    }
+    if (mongoose.connection) {
+      await mongoose.connection.close();
     }
   });
 

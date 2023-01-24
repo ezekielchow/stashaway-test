@@ -4,7 +4,7 @@ const mongoUrl = process.env.MONGO_URL;
 
 mongoose.set('strictQuery', false);
 
-mongoose.connect(`mongodb://${mongoUrl}?replicaSet=rs0`)
+mongoose.connect(`mongodb://${mongoUrl}`)
   .then(() => {
     console.log('Mongodb: Successfully connected');
   })
