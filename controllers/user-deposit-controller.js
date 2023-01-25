@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-const User = require('../models/user');
+const { User } = require('../models/user');
 const { TYPES } = require('../models/deposit-plan');
 const { Portfolio } = require('../models/porfolio');
 const { deposit } = require('../services/user-deposit-service');
@@ -57,11 +57,11 @@ exports.validate = (method) => {
           .withMessage('Deposit plans only of one-time or monthly'),
         body('depositPlans.*.allocations').not().isEmpty().withMessage('Deposit plan allocations are needed'),
         body('depositPlans.*.allocations.*.portfolio').not().isEmpty().withMessage('Deposit plan must have allocation to portfolio'),
-        body('depositPlans.*.allocations.*.amount').not().isEmpty().isNumeric()
-          .withMessage('Deposit plan must have allocation must have an amount which is a number'),
+        body('depositPlans.*.allocations.*.amount').not().isEmpty().isFloat({ min: 1 })
+          .withMessage('Deposit plan must have allocation amount where is one and above'),
         body('deposits').not().isEmpty().withMessage('Must have deposits'),
-        body('deposits.*').not().isEmpty().isNumeric()
-          .withMessage('Deposits must be a number'),
+        body('deposits.*').not().isEmpty().isFloat({ min: 1 })
+          .withMessage('Deposits must be a number one and above'),
       ];
     }
     default: return [];

@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-const User = require('../models/user');
+const { User } = require('../models/user');
 const { Portfolio, find } = require('../models/porfolio');
 
 exports.list = async (req, res) => {

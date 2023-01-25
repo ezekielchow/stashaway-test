@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-const User = require('../models/user');
+const { User } = require('../models/user');
 const validators = require('../helpers/validators');
 const { generateUniqueReferenceCode } = require('../helpers/string');
 

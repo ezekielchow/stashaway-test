@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const User = require('../models/user');
+const { User } = require('../models/user');
 
 exports.passwordConfirmation = (value, { req }) => {
   if (req.body.password !== req.body.passwordRepeat) {

@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const { User } = require('../models/user');
 
 exports.generateUniqueReferenceCode = async function generateUniqueReferenceCode() {
   let exists = true;
