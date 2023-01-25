@@ -63,7 +63,7 @@ const distributeFunds = (userDeposit, depositPlans) => {
   return userDepositAllocations;
 };
 
-module.exports.deposit = async (user, depositPlans, userDeposits) => {
+const deposit = async (user, depositPlans, userDeposits) => {
   try {
     let savedDepositPlans = [];
     let savedUserDeposits = [];
@@ -111,4 +111,9 @@ module.exports.deposit = async (user, depositPlans, userDeposits) => {
   }
 
   return null;
+};
+
+module.exports = {
+  deposit,
+  distributeFunds,
 };

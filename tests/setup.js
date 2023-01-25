@@ -31,6 +31,7 @@ describe('MongodbMemoryServer init', () => {
     if (mongod) {
       await mongod.stop();
     }
+
     if (mongoose.connection) {
       await mongoose.connection.close();
     }
