@@ -51,7 +51,7 @@ const distributeFunds = (userDeposit, depositPlans) => {
       for (let i = 0; i < depositPlan.allocations.length; i += 1) {
         const allocation = depositPlan.allocations[i];
 
-        const percentage = (allocation.amount / allocationsTotal).toFixed(4);
+        const percentage = (allocation.amount / allocationsTotal);
 
         const oldAmount = Object.prototype.hasOwnProperty
           .call(distributedAllocations, allocation.portfolio)
@@ -70,7 +70,44 @@ const distributeFunds = (userDeposit, depositPlans) => {
     }
   });
 
-  // Handle extra balance from deposit
+  if (depositBalance > 0) {
+    const cloneDepositBalance = depositBalance;
+
+    // Handle extra balance from deposit. Divide accordingly to deposit plans
+    const depositPlansTotal = depositPlans.reduce((accumulator, depositPlan) => accumulator
+      + depositPlan.allocations
+        .reduce((accumulatorII, allocation) => accumulatorII + allocation.amount, 0), 0);
+
+    depositPlans.forEach((depositPlan) => {
+      const allocationsTotal = depositPlan.allocations
+        .reduce((accumulator, allocation) => accumulator + allocation.amount, 0);
+
+      const amountForPlan = ((allocationsTotal / depositPlansTotal) * cloneDepositBalance)
+        .toFixed(2);
+
+      for (let i = 0; i < depositPlan.allocations.length; i += 1) {
+        const allocation = depositPlan.allocations[i];
+
+        const percentage = (allocation.amount / allocationsTotal);
+
+        const oldAmount = Object.prototype.hasOwnProperty
+          .call(distributedAllocations, allocation.portfolio)
+          ? distributedAllocations[allocation.portfolio] : 0;
+
+        if (oldAmount === 0) {
+          distributedAllocations[allocation.portfolio] = 0;
+        }
+
+        const amountToAllocate = parseFloat((amountForPlan * percentage).toFixed(2));
+
+        depositBalance -= amountToAllocate;
+        depositBalance = parseFloat(depositBalance.toFixed(2));
+
+        distributedAllocations[allocation.portfolio]
+          += amountToAllocate;
+      }
+    });
+  }
 
   // Save distribution for future referencing
   const portfolioIds = Object.keys(distributedAllocations);
