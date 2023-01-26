@@ -75,12 +75,93 @@ describe('user deposit allocation', () => {
     const distributedFunds = await distributeFunds(10601, depositPlans);
 
     distributedFunds.forEach((distributedFund) => {
-      if (distributedFund.portfolio === portfolioA) {
+      if (distributedFund.portfolio === portfolioA.toString()) {
         expect(distributedFund.distributedAmount).toBe(10001);
       }
 
-      if (distributedFund.portfolio === portfolioB) {
+      if (distributedFund.portfolio === portfolioB.toString()) {
         expect(distributedFund.distributedAmount).toBe(600);
+      }
+    });
+  });
+
+  /*
+  Total Amount: 11500
+  Deposit Plans: [
+    {
+      "type": "one-time",
+      "allocations": [
+          {
+              "portfolio": "63cf91566e3bd7a696526ee1",
+              "amount": 10000
+          },
+          {
+              "portfolio": "63cf91676e3bd7a696526ee4",
+              "amount": 500
+          }
+      ]
+    },
+    {
+      "type": "monthly",
+      "allocations": [
+          {
+              "portfolio": "63cf91566e3bd7a696526ee1",
+              "amount": 1500
+          },
+          {
+              "portfolio": "63cf91676e3bd7a696526ee4",
+              "amount": 500
+          }
+      ]
+    }
+  ]
+  */
+
+  it('distribute funds using ratio between portfolios when deposit is inadequate', async () => {
+    const user = new mongoose.Types.ObjectId();
+    const portfolioA = new mongoose.Types.ObjectId();
+    const portfolioB = new mongoose.Types.ObjectId();
+
+    const depositPlans = [
+      new DepositPlan({
+        user,
+        type: TYPES.ONE_TIME,
+        allocations: [
+          {
+            portfolio: portfolioA,
+            amount: 10000,
+          },
+          {
+            portfolio: portfolioB,
+            amount: 500,
+          },
+        ],
+      }),
+      new DepositPlan({
+        user,
+        type: TYPES.MONTHLY,
+        allocations: [
+          {
+            portfolio: portfolioA,
+            amount: 1500,
+          },
+          {
+            portfolio: portfolioB,
+            amount: 500,
+          },
+        ],
+      }),
+    ];
+
+    const distributedFunds = await distributeFunds(11500, depositPlans);
+
+    distributedFunds.forEach((distributedFund) => {
+      if (distributedFund.portfolio === portfolioA.toString()) {
+        expect(distributedFund.distributedAmount).toBe(10750);
+      }
+
+      if (distributedFund.portfolio === portfolioB.toString()) {
+        expect(distributedFund.distributedAmount).toBe(750);
       }
     });
   });

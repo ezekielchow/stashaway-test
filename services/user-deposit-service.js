@@ -21,6 +21,9 @@ const distributeFunds = (userDeposit, depositPlans) => {
       return;
     }
 
+    // Used for when balance is insufficient
+    const depositBalanceClone = depositBalance;
+
     const allocationsTotal = depositPlan.allocations
       .reduce((accumulator, allocation) => accumulator + allocation.amount, 0);
 
@@ -39,11 +42,32 @@ const distributeFunds = (userDeposit, depositPlans) => {
           distributedAllocations[allocation.portfolio] = 0;
         }
 
-        distributedAllocations[allocation.portfolio] += allocation.amount;
+        distributedAllocations[allocation.portfolio] += parseFloat(allocation.amount);
+      }
+    } else {
+      // Handle plan having lesser balance than all allocations
+
+      // Get percentage for allocations
+      for (let i = 0; i < depositPlan.allocations.length; i += 1) {
+        const allocation = depositPlan.allocations[i];
+
+        const percentage = (allocation.amount / allocationsTotal).toFixed(4);
+
+        const oldAmount = Object.prototype.hasOwnProperty
+          .call(distributedAllocations, allocation.portfolio)
+          ? distributedAllocations[allocation.portfolio] : 0;
+
+        if (oldAmount === 0) {
+          distributedAllocations[allocation.portfolio] = 0;
+        }
+
+        const amountToAllocate = parseFloat((depositBalanceClone * percentage).toFixed(2));
+        depositBalance -= amountToAllocate;
+
+        distributedAllocations[allocation.portfolio]
+          += amountToAllocate;
       }
     }
-
-    // Handle plan having lesser balance than all allocations
   });
 
   // Handle extra balance from deposit
