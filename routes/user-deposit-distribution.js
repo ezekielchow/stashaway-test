@@ -4,6 +4,6 @@ const userDepositDistributionController = require('../controllers/user-deposit-d
 
 const router = express.Router();
 
-router.post('/distributions/:userId', userDepositDistributionController.distributions);
+router.get('/distributions/:userId', userDepositDistributionController.distributions);
 
 module.exports = router;
