@@ -166,12 +166,10 @@ const deposit = async (user, depositPlans, userDeposits) => {
       allocations: userDepositAllocations,
     });
 
-    await userDepositDistribution.save();
+    return userDepositDistribution.save();
   } catch (error) {
     throw new Error(error);
   }
-
-  return null;
 };
 
 module.exports = {
