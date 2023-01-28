@@ -5,11 +5,7 @@ import { UserDepositDistribution } from '../models/user-deposit-distribution';
 import { IDepositPlan } from "../models/deposit-plan";
 import { IUser } from "../models/user";
 
-export const distributeFunds = (userDeposit: number, depositPlans: Array<IDepositPlan>) => {
-  const userDepositAllocations = [];
-  const distributedAllocations: Record<string, number> = {};
-
-  // Move one time plan to the front
+const moveOneTimePlanToTheFront = (depositPlans: Array<IDepositPlan>) => {
   depositPlans.sort((a, b) => {
     if (a.type !== b.type) {
       return a.type === TYPES.ONE_TIME ? -1 : 1;
@@ -17,6 +13,73 @@ export const distributeFunds = (userDeposit: number, depositPlans: Array<IDeposi
 
     return 0;
   });
+
+  return depositPlans
+}
+
+const sufficientFundsDepositPortfolioDistribution = (depositPlan: IDepositPlan, depositBalance: number, distributedAllocations: Record<string, number>) => {
+  for (let i = 0; i < depositPlan.allocations.length; i += 1) {
+    const allocation = depositPlan.allocations[i];
+
+    depositBalance -= allocation.amount;
+
+    const oldAmount = Object.prototype.hasOwnProperty
+      .call(distributedAllocations, allocation.portfolio.toString())
+      ? distributedAllocations[allocation.portfolio.toString()] : 0;
+
+    if (oldAmount === 0) {
+      distributedAllocations[allocation.portfolio.toString()] = 0;
+    }
+
+    distributedAllocations[allocation.portfolio.toString()] += allocation.amount;
+  }
+
+  return {
+    distributedAllocations,
+    depositBalance
+  }
+}
+
+const percentageBasedPortfolioDistribution = (
+  depositPlan: IDepositPlan,
+  depositBalance: number,
+  distributedAllocations: Record<string, number>,
+  allocationsTotal: number,
+  totalBalanceForPlan: number) => {
+  for (let i = 0; i < depositPlan.allocations.length; i += 1) {
+    const allocation = depositPlan.allocations[i];
+
+    // Get percentage for allocations
+    const percentage = (allocation.amount / allocationsTotal);
+
+    const oldAmount = Object.prototype.hasOwnProperty
+      .call(distributedAllocations, allocation.portfolio.toString())
+      ? distributedAllocations[allocation.portfolio.toString()] : 0;
+
+    if (oldAmount === 0) {
+      distributedAllocations[allocation.portfolio.toString()] = 0;
+    }
+
+    const amountToAllocate = parseFloat((totalBalanceForPlan * percentage).toFixed(2));
+    depositBalance -= amountToAllocate;
+    depositBalance = parseFloat(depositBalance.toFixed(2));
+
+    distributedAllocations[allocation.portfolio.toString()]
+      += amountToAllocate;
+  }
+
+  return {
+    distributedAllocations,
+    depositBalance
+  }
+}
+
+export const distributeFunds = (userDeposit: number, depositPlans: Array<IDepositPlan>) => {
+  const userDepositAllocations = [];
+  let distributedAllocations: Record<string, number> = {};
+
+  // Move one time plan to the front
+  depositPlans = moveOneTimePlanToTheFront(depositPlans)
 
   let depositBalance = userDeposit;
 
@@ -33,45 +96,18 @@ export const distributeFunds = (userDeposit: number, depositPlans: Array<IDeposi
 
     // Just allocate as planned
     if (depositBalance >= allocationsTotal) {
-      for (let i = 0; i < depositPlan.allocations.length; i += 1) {
-        const allocation = depositPlan.allocations[i];
 
-        depositBalance -= allocation.amount;
-
-        const oldAmount = Object.prototype.hasOwnProperty
-          .call(distributedAllocations, allocation.portfolio.toString())
-          ? distributedAllocations[allocation.portfolio.toString()] : 0;
-
-        if (oldAmount === 0) {
-          distributedAllocations[allocation.portfolio.toString()] = 0;
-        }
-
-        distributedAllocations[allocation.portfolio.toString()] += allocation.amount;
-      }
-    } else {
-      // Handle plan having lesser balance than all allocations
-
-      // Get percentage for allocations
-      for (let i = 0; i < depositPlan.allocations.length; i += 1) {
-        const allocation = depositPlan.allocations[i];
-
-        const percentage = (allocation.amount / allocationsTotal);
-
-        const oldAmount = Object.prototype.hasOwnProperty
-          .call(distributedAllocations, allocation.portfolio.toString())
-          ? distributedAllocations[allocation.portfolio.toString()] : 0;
-
-        if (oldAmount === 0) {
-          distributedAllocations[allocation.portfolio.toString()] = 0;
-        }
-
-        const amountToAllocate = parseFloat((depositBalanceClone * percentage).toFixed(2));
-        depositBalance -= amountToAllocate;
-
-        distributedAllocations[allocation.portfolio.toString()]
-          += amountToAllocate;
-      }
+      ({ distributedAllocations, depositBalance } = sufficientFundsDepositPortfolioDistribution(depositPlan, depositBalance, distributedAllocations))
+      return;
     }
+
+    // Handle plan having lesser balance than all allocations
+    ({ distributedAllocations, depositBalance } = percentageBasedPortfolioDistribution(
+      depositPlan,
+      depositBalance,
+      distributedAllocations,
+      allocationsTotal,
+      depositBalanceClone))
   });
 
   if (depositBalance > 0) {
@@ -89,27 +125,13 @@ export const distributeFunds = (userDeposit: number, depositPlans: Array<IDeposi
       const amountForPlan: number = parseFloat(((allocationsTotal / depositPlansTotal) * cloneDepositBalance)
         .toFixed(2));
 
-      for (let i = 0; i < depositPlan.allocations.length; i += 1) {
-        const allocation = depositPlan.allocations[i];
-
-        const percentage = (allocation.amount / allocationsTotal);
-
-        const oldAmount = Object.prototype.hasOwnProperty
-          .call(distributedAllocations, allocation.portfolio.toString())
-          ? distributedAllocations[allocation.portfolio.toString()] : 0;
-
-        if (oldAmount === 0) {
-          distributedAllocations[allocation.portfolio.toString()] = 0;
-        }
-
-        const amountToAllocate = parseFloat((amountForPlan * percentage).toFixed(2));
-
-        depositBalance -= amountToAllocate;
-        depositBalance = parseFloat(depositBalance.toFixed(2));
-
-        distributedAllocations[allocation.portfolio.toString()]
-          += amountToAllocate;
-      }
+      // Use divided balance to allocation to portfolios accordingly
+      ({ distributedAllocations, depositBalance } = percentageBasedPortfolioDistribution(
+        depositPlan,
+        depositBalance,
+        distributedAllocations,
+        allocationsTotal,
+        amountForPlan))
     });
   }
 
