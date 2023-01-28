@@ -1,14 +1,20 @@
 import { Schema, Types, model } from 'mongoose';
 
-const TYPES = {
+export const TYPES = {
   ONE_TIME: 'one-time',
   MONTHLY: 'monthly',
 };
 
-interface IDepositPlan {
+export interface AllocationType {
+  _id: Types.ObjectId
+  portfolio: Types.ObjectId,
+  amount: number,
+}
+
+export interface IDepositPlan {
   user: Types.ObjectId,
   type: string,
-  allocations: Array<Object>
+  allocations: Array<AllocationType>
 }
 
 const depositPlanSchema = new Schema({
@@ -36,7 +42,4 @@ const depositPlanSchema = new Schema({
 
 const DepositPlan = model<IDepositPlan>('DepositPlan', depositPlanSchema);
 
-module.exports = {
-  DepositPlan,
-  TYPES,
-};
+export default DepositPlan

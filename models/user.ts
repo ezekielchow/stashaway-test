@@ -1,6 +1,7 @@
-import { Schema, model } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 
-interface IUser {
+export interface IUser {
+  _id: Types.ObjectId,
   email: string,
   referenceCode: string
 }
@@ -18,5 +19,7 @@ const userSchema = new Schema<IUser>({
   },
 });
 
-module.exports.User = model<IUser>('User', userSchema);
+const User = model<IUser>('User', userSchema);
+
+export default User
 

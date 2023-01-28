@@ -1,6 +1,6 @@
 import { Schema, Types, model } from 'mongoose';
 
-interface IUserDepositDistributionSchema {
+export interface IUserDepositDistributionSchema {
   user: Types.ObjectId,
   amount: number,
   allocations: Array<Object>
@@ -33,4 +33,6 @@ const userDepositDistributionSchema = new Schema({
   },
 });
 
-module.exports.UserDepositDistribution = model<IUserDepositDistributionSchema>('UserDepositDistribution', userDepositDistributionSchema);
+const UserDepositDistribution = model<IUserDepositDistributionSchema>('UserDepositDistribution', userDepositDistributionSchema);
+
+export default UserDepositDistribution

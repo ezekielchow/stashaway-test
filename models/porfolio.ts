@@ -1,6 +1,6 @@
 import { Schema, Types, model } from 'mongoose';
 
-interface IPortfolio {
+export interface IPortfolio {
   name: string,
   user: Types.ObjectId
 }
@@ -19,13 +19,11 @@ const portfolioSchema = new Schema({
 
 const Portfolio = model('Portfolio', portfolioSchema);
 
-module.exports.Portfolio = Portfolio;
-
 type findParams = {
   user: string | Types.ObjectId
 }
 
-module.exports.find = async (params: findParams) => {
+export const find = async (params: findParams) => {
   const query = Portfolio.find();
 
   if (params.user) {
@@ -34,3 +32,5 @@ module.exports.find = async (params: findParams) => {
 
   return query.exec();
 };
+
+export default Portfolio

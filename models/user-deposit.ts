@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-interface IUserDeposit {
+export interface IUserDeposit {
   amount: number,
   depositedAt: Date
 }
@@ -16,4 +16,6 @@ const userDepositSchema = new Schema({
   },
 });
 
-module.exports.UserDeposit = model<IUserDeposit>('UserDeposit', userDepositSchema);
+const UserDeposit = model<IUserDeposit>('UserDeposit', userDepositSchema);
+
+export default UserDeposit

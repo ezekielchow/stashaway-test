@@ -2,9 +2,12 @@ const { DepositPlan, TYPES } = require('../dist/models/deposit-plan');
 const { UserDeposit } = require('../dist/models/user-deposit');
 const { UserDepositDistribution } = require('../dist/models/user-deposit-distribution');
 
-const distributeFunds = (userDeposit, depositPlans) => {
+import { IDepositPlan } from "../models/deposit-plan";
+import { IUser } from "../models/user";
+
+export const distributeFunds = (userDeposit: number, depositPlans: Array<IDepositPlan>) => {
   const userDepositAllocations = [];
-  const distributedAllocations = {};
+  const distributedAllocations: Record<string, number> = {};
 
   // Move one time plan to the front
   depositPlans.sort((a, b) => {
@@ -36,14 +39,14 @@ const distributeFunds = (userDeposit, depositPlans) => {
         depositBalance -= allocation.amount;
 
         const oldAmount = Object.prototype.hasOwnProperty
-          .call(distributedAllocations, allocation.portfolio)
-          ? distributedAllocations[allocation.portfolio] : 0;
+          .call(distributedAllocations, allocation.portfolio.toString())
+          ? distributedAllocations[allocation.portfolio.toString()] : 0;
 
         if (oldAmount === 0) {
-          distributedAllocations[allocation.portfolio] = 0;
+          distributedAllocations[allocation.portfolio.toString()] = 0;
         }
 
-        distributedAllocations[allocation.portfolio] += parseFloat(allocation.amount);
+        distributedAllocations[allocation.portfolio.toString()] += allocation.amount;
       }
     } else {
       // Handle plan having lesser balance than all allocations
@@ -55,17 +58,17 @@ const distributeFunds = (userDeposit, depositPlans) => {
         const percentage = (allocation.amount / allocationsTotal);
 
         const oldAmount = Object.prototype.hasOwnProperty
-          .call(distributedAllocations, allocation.portfolio)
-          ? distributedAllocations[allocation.portfolio] : 0;
+          .call(distributedAllocations, allocation.portfolio.toString())
+          ? distributedAllocations[allocation.portfolio.toString()] : 0;
 
         if (oldAmount === 0) {
-          distributedAllocations[allocation.portfolio] = 0;
+          distributedAllocations[allocation.portfolio.toString()] = 0;
         }
 
         const amountToAllocate = parseFloat((depositBalanceClone * percentage).toFixed(2));
         depositBalance -= amountToAllocate;
 
-        distributedAllocations[allocation.portfolio]
+        distributedAllocations[allocation.portfolio.toString()]
           += amountToAllocate;
       }
     }
@@ -83,8 +86,8 @@ const distributeFunds = (userDeposit, depositPlans) => {
       const allocationsTotal = depositPlan.allocations
         .reduce((accumulator, allocation) => accumulator + allocation.amount, 0);
 
-      const amountForPlan = ((allocationsTotal / depositPlansTotal) * cloneDepositBalance)
-        .toFixed(2);
+      const amountForPlan: number = parseFloat(((allocationsTotal / depositPlansTotal) * cloneDepositBalance)
+        .toFixed(2));
 
       for (let i = 0; i < depositPlan.allocations.length; i += 1) {
         const allocation = depositPlan.allocations[i];
@@ -92,11 +95,11 @@ const distributeFunds = (userDeposit, depositPlans) => {
         const percentage = (allocation.amount / allocationsTotal);
 
         const oldAmount = Object.prototype.hasOwnProperty
-          .call(distributedAllocations, allocation.portfolio)
-          ? distributedAllocations[allocation.portfolio] : 0;
+          .call(distributedAllocations, allocation.portfolio.toString())
+          ? distributedAllocations[allocation.portfolio.toString()] : 0;
 
         if (oldAmount === 0) {
-          distributedAllocations[allocation.portfolio] = 0;
+          distributedAllocations[allocation.portfolio.toString()] = 0;
         }
 
         const amountToAllocate = parseFloat((amountForPlan * percentage).toFixed(2));
@@ -104,7 +107,7 @@ const distributeFunds = (userDeposit, depositPlans) => {
         depositBalance -= amountToAllocate;
         depositBalance = parseFloat(depositBalance.toFixed(2));
 
-        distributedAllocations[allocation.portfolio]
+        distributedAllocations[allocation.portfolio.toString()]
           += amountToAllocate;
       }
     });
@@ -125,7 +128,17 @@ const distributeFunds = (userDeposit, depositPlans) => {
   return userDepositAllocations;
 };
 
-const deposit = async (user, depositPlans, userDeposits) => {
+interface AllocationInput {
+  portfolio: string,
+  amount: number
+}
+
+interface DepositPlansInput {
+  type: string,
+  allocations: Array<AllocationInput>
+}
+
+export const deposit = async (user: IUser, depositPlans: Array<DepositPlansInput>, userDeposits: Array<number>) => {
   try {
     let savedDepositPlans = [];
     let savedUserDeposits = [];
@@ -143,7 +156,7 @@ const deposit = async (user, depositPlans, userDeposits) => {
       return depositPlanToSave.save();
     }));
 
-    savedUserDeposits = await Promise.all(userDeposits.map(async (userDeposit) => {
+    savedUserDeposits = await Promise.all(userDeposits.map(async (userDeposit: number) => {
       const userDepositToSave = new UserDeposit({
         amount: userDeposit,
         depositedAt: new Date(),
@@ -170,12 +183,7 @@ const deposit = async (user, depositPlans, userDeposits) => {
     });
 
     return userDepositDistribution.save();
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error);
   }
-};
-
-module.exports = {
-  deposit,
-  distributeFunds,
 };
