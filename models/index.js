@@ -1,8 +1,8 @@
-const { Portfolio } = require('./porfolio');
-const { DepositPlan } = require('./deposit-plan');
-const { UserDeposit } = require('./user-deposit');
-const { User } = require('./user');
-const { UserDepositDistribution } = require('./user-deposit-distribution');
+const { Portfolio } = require('../dist/porfolio');
+const { DepositPlan } = require('../dist/deposit-plan');
+const { UserDeposit } = require('../dist/user-deposit');
+const { User } = require('../dist/user');
+const { UserDepositDistribution } = require('../dist/user-deposit-distribution');
 
 module.exports = {
   Portfolio,

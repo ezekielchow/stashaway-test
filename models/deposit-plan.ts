@@ -1,13 +1,19 @@
-const mongoose = require('mongoose');
+import { Schema, Types, model } from 'mongoose';
 
 const TYPES = {
   ONE_TIME: 'one-time',
   MONTHLY: 'monthly',
 };
 
-const depositPlanSchema = new mongoose.Schema({
+interface IDepositPlan {
+  user: Types.ObjectId,
+  type: string,
+  allocations: Array<Object>
+}
+
+const depositPlanSchema = new Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
@@ -17,7 +23,7 @@ const depositPlanSchema = new mongoose.Schema({
   },
   allocations: [{
     portfolio: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Portfolio',
       required: true,
     },
@@ -28,7 +34,7 @@ const depositPlanSchema = new mongoose.Schema({
   }],
 });
 
-const DepositPlan = mongoose.model('DepositPlan', depositPlanSchema);
+const DepositPlan = model<IDepositPlan>('DepositPlan', depositPlanSchema);
 
 module.exports = {
   DepositPlan,
