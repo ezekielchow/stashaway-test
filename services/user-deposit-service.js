@@ -6,6 +6,7 @@ const distributeFunds = (userDeposit, depositPlans) => {
   const userDepositAllocations = [];
   const distributedAllocations = {};
 
+  // Move one time plan to the front
   depositPlans.sort((a, b) => {
     if (a.type !== b.type) {
       return a.type === TYPES.ONE_TIME ? -1 : 1;
@@ -129,6 +130,7 @@ const deposit = async (user, depositPlans, userDeposits) => {
     let savedDepositPlans = [];
     let savedUserDeposits = [];
 
+    // Clear up for new scenario
     await DepositPlan.deleteMany({ user: user._id });
 
     savedDepositPlans = await Promise.all(depositPlans.map(async (depositPlan) => {
@@ -153,6 +155,7 @@ const deposit = async (user, depositPlans, userDeposits) => {
     const totalAmount = savedUserDeposits
       .reduce((accumulator, userDeposit) => accumulator + userDeposit.amount, 0);
 
+    // Main function here
     const userDepositAllocations = await distributeFunds(
       totalAmount,
       savedDepositPlans,
