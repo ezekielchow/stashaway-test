@@ -35,3 +35,6 @@
 - Use Typescript for files that aren't using it
 - Add linting for Typescript files
 - Imports to use alias instead of relative path
+
+## Tests
+- Run `$ npm run test`
