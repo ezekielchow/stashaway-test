@@ -34,3 +34,4 @@
 - Refactoring of some duplication of code in user-deposit-service.js & improve readerbility so handled scenarios can be seen clearly
 - Use Typescript for files that aren't using it
 - Add linting for Typescript files
+- Imports to use alias instead of relative path

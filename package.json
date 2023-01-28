@@ -6,7 +6,7 @@
     "build": "npx tsc",
     "watch": "babel-watch  --watch -- index",
     "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www",
+    "start": "npx tsc && node ./bin/www",
     "client:build-dev": "webpack --watch",
     "lint": "npx eslint .",
     "test": "jest --no-cache --detectOpenHandles"
