@@ -1,6 +1,6 @@
-const { DepositPlan, TYPES } = require('../dist/models/deposit-plan');
-const { UserDeposit } = require('../dist/models/user-deposit');
-const { UserDepositDistribution } = require('../dist/models/user-deposit-distribution');
+import { DepositPlan, TYPES } from '../models/deposit-plan';
+import { UserDeposit } from '../models/user-deposit';
+import UserDepositDistribution from '../models/user-deposit-distribution';
 
 import { IDepositPlan } from "../models/deposit-plan";
 import { IUser } from "../models/user";

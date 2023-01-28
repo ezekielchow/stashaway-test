@@ -40,6 +40,4 @@ const depositPlanSchema = new Schema({
   }],
 });
 
-const DepositPlan = model<IDepositPlan>('DepositPlan', depositPlanSchema);
-
-export default DepositPlan
+export const DepositPlan = model<IDepositPlan>('DepositPlan', depositPlanSchema);

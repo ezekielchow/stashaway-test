@@ -16,6 +16,4 @@ const userDepositSchema = new Schema({
   },
 });
 
-const UserDeposit = model<IUserDeposit>('UserDeposit', userDepositSchema);
-
-export default UserDeposit
+export const UserDeposit = model<IUserDeposit>('UserDeposit', userDepositSchema);
