@@ -17,7 +17,7 @@ const portfolioSchema = new Schema({
   },
 });
 
-const Portfolio = model('Portfolio', portfolioSchema);
+export const Portfolio = model('Portfolio', portfolioSchema);
 
 type findParams = {
   user: string | Types.ObjectId
@@ -32,5 +32,3 @@ export const find = async (params: findParams) => {
 
   return query.exec();
 };
-
-export default Portfolio

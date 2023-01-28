@@ -33,6 +33,4 @@ const userDepositDistributionSchema = new Schema({
   },
 });
 
-const UserDepositDistribution = model<IUserDepositDistributionSchema>('UserDepositDistribution', userDepositDistributionSchema);
-
-export default UserDepositDistribution
+export const UserDepositDistribution = model<IUserDepositDistributionSchema>('UserDepositDistribution', userDepositDistributionSchema);
