@@ -1,6 +1,6 @@
-const { DepositPlan, TYPES } = require('../models/deposit-plan');
-const { UserDeposit } = require('../models/user-deposit');
-const { UserDepositDistribution } = require('../models/user-deposit-distribution');
+const { DepositPlan, TYPES } = require('../dist/models/deposit-plan');
+const { UserDeposit } = require('../dist/models/user-deposit');
+const { UserDepositDistribution } = require('../dist/models/user-deposit-distribution');
 
 const distributeFunds = (userDeposit, depositPlans) => {
   const userDepositAllocations = [];

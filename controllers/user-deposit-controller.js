@@ -1,8 +1,8 @@
 const { body, validationResult } = require('express-validator');
 
-const { User } = require('../models/user');
-const { TYPES } = require('../models/deposit-plan');
-const { Portfolio } = require('../models/porfolio');
+const { User } = require('../dist/models/user');
+const { TYPES } = require('../dist/models/deposit-plan');
+const { Portfolio } = require('../dist/models/porfolio');
 const { deposit } = require('../services/user-deposit-service');
 
 exports.deposit = async (req, res) => {
