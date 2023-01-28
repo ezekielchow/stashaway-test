@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { distributeFunds } = require('../../services/user-deposit-service');
+const { distributeFunds } = require('../../dist/services/user-deposit-service');
 const { TYPES, DepositPlan } = require('../../dist/models/deposit-plan');
 
 describe('user deposit allocation', () => {

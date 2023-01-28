@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator');
 const { User } = require('../dist/models/user');
 const { TYPES } = require('../dist/models/deposit-plan');
 const { Portfolio } = require('../dist/models/porfolio');
-const { deposit } = require('../services/user-deposit-service');
+const { deposit } = require('../dist/services/user-deposit-service');
 
 exports.deposit = async (req, res) => {
   try {
